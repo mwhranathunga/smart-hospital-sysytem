@@ -3,6 +3,9 @@
 //Functions
 void displaySpecialties();
 void displayWards();
+void initBeds();
+int findFreeBed(int ward);
+void displayBedStatus(int ward);
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -17,10 +20,18 @@ char wardName[4][30] = {"General Ward", "Paediatrics Ward", "Surgical Ward", "IC
 float bedRate [4] = {3000.00, 60000.00,12000.00, 25000.00};
 int bedCapacity[4] = {20, 10, 10, 5};
 
+int bedOccupancy[4][20];
+
+
 int main() {
+    initBeds();
+
     displaySpecialties();
     displayWards();
-    
+
+    displayBedStatus(0);
+    printf("\nFree bed index in General ward: %d\n", findFreeBed(0));
+
     return 0;
 }
 
@@ -41,3 +52,38 @@ void displayWards() {
         printf("%d. %-25s | Rate: %8.2f/day | Capacity: %2d\n", wardID[i], wardName[i], bedRate[i], bedCapacity[i]);
     }
 }
+
+
+
+void initBeds() {
+    int w, b;
+    for (w = 0; w < 4; w++) {
+        for (b = 0; b < 20; b++) {
+            bedOccupancy[w][b] = 0;
+        }
+    }
+}
+
+
+
+int findFreeBed(int ward) {
+    int b;
+    for (b = 0; b < bedCapacity[ward]; b++) {
+        if (bedOccupancy[ward][b] == 0) {
+            return b; 
+        }
+    }
+    return -1; 
+}
+
+
+
+void displayBedStatus(int ward) {
+    int b;
+    printf("\n--- Bed Status for %s ---\n", wardName[ward]);
+    for (b = 0; b < bedCapacity[ward]; b++) {
+        printf("Bed #%2d: %s\n", b + 1, bedOccupancy[ward][b] == 0 ? "Available" : "Occupied");
+    }
+}
+
+
