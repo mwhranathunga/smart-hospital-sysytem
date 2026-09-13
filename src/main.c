@@ -6,6 +6,7 @@ void displayWards();
 void initBeds();
 int findFreeBed(int ward);
 void displayBedStatus(int ward);
+int getIntInRange(int min, int max);
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -17,20 +18,52 @@ int dailyCap[4] = {30, 20, 12, 10};
 //Hospital Wards
 int wardID[4] = {1, 2, 3, 4};
 char wardName[4][30] = {"General Ward", "Paediatrics Ward", "Surgical Ward", "ICU"};
-float bedRate [4] = {3000.00, 60000.00,12000.00, 25000.00};
+float bedRate [4] = {3000.00, 6000.00, 12000.00, 25000.00};
 int bedCapacity[4] = {20, 10, 10, 5};
 
 int bedOccupancy[4][20];
 
 
 int main() {
+    int choice;
+
     initBeds();
 
-    displaySpecialties();
-    displayWards();
+    do {
+        printf("\n==== SMART HOSPITAL MENU ====\n");
+        printf("1. Register Patient\n");
+        printf("2. View Bed Status\n");
+        printf("3. View Priority List\n");
+        printf("4. Generate Reports\n");
+        printf("5. Exit\n");
 
-    displayBedStatus(0);
-    printf("\nFree bed index in General ward: %d\n", findFreeBed(0));
+        choice = getIntInRange(1, 5);
+
+        switch (choice) {
+            case 1:
+                printf("Coming soon: Register Patient\n");
+                break;
+            case 2:
+                displaySpecialties();
+                displayWards();
+                displayBedStatus(0);
+                displayBedStatus(1);
+                displayBedStatus(2);
+                displayBedStatus(3);
+                break;
+            case 3:
+                printf("Coming soon: View Priority List\n");
+                break;
+            case 4:
+                printf("Coming soon: Generate Reports\n");
+                break;
+            case 5:
+                printf("Exiting... Goodbye!\n");
+                break;
+
+        
+      }
+    } while (choice != 5);
 
     return 0;
 }
@@ -82,8 +115,23 @@ void displayBedStatus(int ward) {
     int b;
     printf("\n--- Bed Status for %s ---\n", wardName[ward]);
     for (b = 0; b < bedCapacity[ward]; b++) {
-        printf("Bed #%2d: %s\n", b + 1, bedOccupancy[ward][b] == 0 ? "Available" : "Occupied");
+        printf("Bed #%02d: %s\n", b + 1, bedOccupancy[ward][b] == 0 ? "Available" : "Occupied");
     }
 }
 
+
+int getIntInRange(int min, int max) {
+    int value;
+    int status;
+    do {
+        printf("Enter a value between %d and %d: ", min, max);
+        status = scanf("%d", &value);
+         
+        if (status !=1) {
+            while (getchar() != '\n');
+        }
+
+    } while (status != 1 || value < min || value > max);
+    return value;
+}
 
