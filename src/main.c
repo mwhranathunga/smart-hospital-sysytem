@@ -163,9 +163,34 @@ void registerPatient() {
         printf("Note: Daily patient cap reached for this specialty today.\n");
     }
 
-    isAdmitted[i] = 0;
-    wardIdx[i] = 0;
-    daysAdmitted[i] = 0;
+    printf("Admitted to ward? (1=Yes, 0=No): ");
+    isAdmitted[i] = getIntInRange(0, 1);
+
+    if (isAdmitted[i] == 1) {
+        int wID, freeBed;
+
+        printf("Ward (1=General, 2=Paediatric, 3=Surgical, 4=ICU): ");
+        wID = getIntInRange(1, 4);
+        wardIdx[i] = wID - 1;
+
+        freeBed = findFreeBed(wardIdx[i]);
+
+        if (freeBed == -1) {
+            printf("Sorry, %s is full, Registering as outpatient instead.\n", wardName[wardIdx[i]]);
+            isAdmitted[i] = 0;
+            daysAdmitted[i] = 0;
+        } else {
+            bedNumber[i] = freeBed;
+            bedOccupancy[wardIdx[i]][freeBed] = 1;
+            printf("Days Admitted: ");
+            daysAdmitted[i] = getIntInRange(1, 365);        
+        }
+        
+    } else {
+        wardIdx[i] = -1;
+        daysAdmitted[i] = 0;
+    }
+
 
     patientCount++;
     queueCount[specialtyIdx[i]]++;
