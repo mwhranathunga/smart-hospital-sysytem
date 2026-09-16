@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/hashanranathunga/C Programming/smart-hospital-sysytem/src/main'
+relocations:     []
+...

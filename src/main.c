@@ -8,6 +8,10 @@ int findFreeBed(int ward);
 void displayBedStatus(int ward);
 int getIntInRange(int min, int max);
 void registerPatient();
+float calcWaitTime(int specIDX);
+float calcSurcharge(int triage, float fee);
+float calcWardCost(int days, int wIDX);
+float calcDiscount(int age, float gross);
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -35,6 +39,13 @@ int isAdmitted[MAX_PATIENTS];
 int wardIdx[MAX_PATIENTS];
 int bedNumber[MAX_PATIENTS];
 int daysAdmitted[MAX_PATIENTS];
+
+float waitTime[MAX_PATIENTS];
+float surcharge[MAX_PATIENTS];
+float wardCost[MAX_PATIENTS];
+float grossTotal[MAX_PATIENTS];
+float discount[MAX_PATIENTS];
+float finalAmount[MAX_PATIENTS];
 
 int patientCount = 0;
 int queueCount[4] = {0, 0, 0, 0};
@@ -191,9 +202,44 @@ void registerPatient() {
         daysAdmitted[i] = 0;
     }
 
+    waitTime[i] = calcWaitTime(specialtyIdx[i]);
+    surcharge[i] = calcSurcharge(triageLevel[i], baseFee[specialtyIdx[i]]);
+    wardCost[i] = calcWardCost(daysAdmitted[i], wardIdx[i]);
+    grossTotal[i] = baseFee[specialtyIdx[i]] + surcharge[i] + wardCost[i];
+    discount[i] = calcDiscount(patientAge[i], grossTotal[i]);
+    finalAmount[i] = grossTotal[i] - discount[i];
+
 
     patientCount++;
     queueCount[specialtyIdx[i]]++;
 
-    printf("\nPatient registered successfully. Total patients: %d\n", patientCount);
+    printf("\n[TEMP TEST] Gross: %.2f | Discount: %.2f | Final: %.2f | Wait: %.2f mins\n",
+        grossTotal[i], discount[i], finalAmount[i], waitTime[i]);
+}
+
+float calcWaitTime(int specIdx) {
+    return queueCount[specIdx] * consultMins[specIdx];
+}
+
+float calcSurcharge(int triage, float fee) {
+    if (triage == 2) {
+        return fee * 0.20;
+    } else if (triage == 3) {
+        return fee * 0.50;
+    }
+    return 0;
+}
+
+float calcWardCost(int days, int wIdx) {
+    if (days > 0) {
+        return days * bedRate[wIdx];
+    }
+    return 0;
+}
+
+float calcDiscount(int age, float gross) {
+    if (age < 5 || age > 65) {
+        return gross * 0.15;
+    }
+    return 0;
 }
