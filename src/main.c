@@ -7,6 +7,7 @@ void initBeds();
 int findFreeBed(int ward);
 void displayBedStatus(int ward);
 int getIntInRange(int min, int max);
+void registerPatient();
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -22,6 +23,21 @@ float bedRate [4] = {3000.00, 6000.00, 12000.00, 25000.00};
 int bedCapacity[4] = {20, 10, 10, 5};
 
 int bedOccupancy[4][20];
+
+//Patient Records
+#define MAX_PATIENTS 100
+
+char patientName[MAX_PATIENTS][50];
+int patientAge[MAX_PATIENTS];
+int triageLevel[MAX_PATIENTS];
+int specialtyIdx[MAX_PATIENTS];
+int isAdmitted[MAX_PATIENTS];
+int wardIdx[MAX_PATIENTS];
+int bedNumber[MAX_PATIENTS];
+int daysAdmitted[MAX_PATIENTS];
+
+int patientCount = 0;
+int queueCount[4] = {0, 0, 0, 0};
 
 
 int main() {
@@ -41,7 +57,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                printf("Coming soon: Register Patient\n");
+                registerPatient();
                 break;
             case 2:
                 displaySpecialties();
@@ -60,15 +76,11 @@ int main() {
             case 5:
                 printf("Exiting... Goodbye!\n");
                 break;
-
-        
-      }
+        }
     } while (choice != 5);
 
     return 0;
 }
-
-
 
 void displaySpecialties() {
     int i;
@@ -86,8 +98,6 @@ void displayWards() {
     }
 }
 
-
-
 void initBeds() {
     int w, b;
     for (w = 0; w < 4; w++) {
@@ -96,8 +106,6 @@ void initBeds() {
         }
     }
 }
-
-
 
 int findFreeBed(int ward) {
     int b;
@@ -109,8 +117,6 @@ int findFreeBed(int ward) {
     return -1; 
 }
 
-
-
 void displayBedStatus(int ward) {
     int b;
     printf("\n--- Bed Status for %s ---\n", wardName[ward]);
@@ -118,7 +124,6 @@ void displayBedStatus(int ward) {
         printf("Bed #%02d: %s\n", b + 1, bedOccupancy[ward][b] == 0 ? "Available" : "Occupied");
     }
 }
-
 
 int getIntInRange(int min, int max) {
     int value;
@@ -135,3 +140,35 @@ int getIntInRange(int min, int max) {
     return value;
 }
 
+void registerPatient() {
+    int i = patientCount;
+    int specID;
+
+    printf("\n--- Register New Patient ---\n");
+
+    printf("Patient Name: ");
+    scanf(" %49[^\n]", patientName[i]);
+
+    printf("Age: ");
+    patientAge[i] = getIntInRange(0, 120);
+
+    printf("Triage Level (1=Normal, 2=Urgent, 3=Critical): ");
+    triageLevel[i] = getIntInRange(1, 3);
+
+    printf("Specialty (1=General, 2=Paediatrics, 3=Cardiology, 4=Neurology): ");
+    specID = getIntInRange(1, 4);
+    specialtyIdx[i] = specID - 1;
+
+    if (queueCount[specialtyIdx[i]] >= dailyCap[specialtyIdx[i]]) {
+        printf("Note: Daily patient cap reached for this specialty today.\n");
+    }
+
+    isAdmitted[i] = 0;
+    wardIdx[i] = 0;
+    daysAdmitted[i] = 0;
+
+    patientCount++;
+    queueCount[specialtyIdx[i]]++;
+
+    printf("\nPatient registered successfully. Total patients: %d\n", patientCount);
+}
