@@ -12,6 +12,7 @@ float calcWaitTime(int specIDX);
 float calcSurcharge(int triage, float fee);
 float calcWardCost(int days, int wIDX);
 float calcDiscount(int age, float gross);
+void printBill(int i);
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -213,8 +214,7 @@ void registerPatient() {
     patientCount++;
     queueCount[specialtyIdx[i]]++;
 
-    printf("\n[TEMP TEST] Gross: %.2f | Discount: %.2f | Final: %.2f | Wait: %.2f mins\n",
-        grossTotal[i], discount[i], finalAmount[i], waitTime[i]);
+    printBill(i);
 }
 
 float calcWaitTime(int specIdx) {
@@ -242,4 +242,68 @@ float calcDiscount(int age, float gross) {
         return gross * 0.15;
     }
     return 0;
+}
+
+void printBill(int i) {
+    int patID = 1000 + i + 1;
+
+    printf("\n====================================================\n");
+    printf(" SMART HOSPITAL ADMISSION & BILL\n");
+    printf("----------------------------------------------------------------------------------------\n");
+    printf("Patient ID      : PAT-%d\n", patID);
+    printf("Patient Name    : %s\n", patientName[i]);
+
+    printf("Age             : %d Years", patientAge[i]);
+    if (patientAge[i] < 5 || patientAge[i] > 65) {
+        printf(" (15%% Subsidy Eligible)\n");
+    } else {
+        printf("\n");
+    }
+
+    printf("Specialty       : %s\n", specialtyName[specialtyIdx[i]]);
+
+    if (isAdmitted[i] == 1) {
+        printf("Assigned Ward   : %s (Bed #%02d)\n", wardName[wardIdx[i]], bedNumber[i] + 1);
+    } else {
+        printf("Assigned Ward   : Outpatient (OPD)\n");
+    }
+
+    printf("Urgency Level   : ");
+    switch (triageLevel[i]) {
+        case 1: printf("Level 1 (Normal)\n"); break;
+        case 2: printf("Level 2 (Urgent)\n"); break;
+        case 3: printf("Level 3 (Critical)\n"); break;
+    }
+
+    printf("----------------------------------------------------------------------------------------\n");
+    printf("Base Consultation Fee   : LKR %.2f\n", baseFee[specialtyIdx[i]]);
+
+    if (triageLevel[i] == 1) {
+        printf("Emergency Surcharge     : LKR %.2f (0%%)\n", surcharge[i]);
+    } else if (triageLevel[i] == 2) {
+        printf("Emergency Surcharge     : LKR %.2f (20%%)\n", surcharge[i]);
+    } else {
+        printf("Emergency Surcharge     : LKR %.2f (50%%)\n", surcharge[i]);
+    }
+
+    printf("Ward Stay Cost (%d Days) : LKR %.2f\n", daysAdmitted[i], wardCost[i]);
+
+    printf("----------------------------------------------------------------------------------------\n");
+    printf("Gross Total Bill        : LKR %.2f\n", grossTotal[i]);
+    printf("Age Subsidy Discount    : LKR -%.2f", discount[i]);
+    if (discount[i] > 0) {
+        printf(" (15%%)\n");
+    } else {
+        printf("\n");
+    }
+
+    printf("----------------------------------------------------------------------------------------\n");
+    printf("Final Payable Amount    : LKR %.2f\n", finalAmount[i]);
+
+    if (waitTime[i] == 0) {
+        printf("Estimated Waiting Time  : 0.00 mins (Immediate Attention)\n");
+    } else {
+        printf("Estimated Waiting Time  : %.2f mins\n", waitTime[i]);
+    }
+    printf("====================================================\n");
 }
