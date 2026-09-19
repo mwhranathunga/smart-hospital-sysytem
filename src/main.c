@@ -15,6 +15,8 @@ float calcDiscount(int age, float gross);
 void printBill(int i);
 void printPriorityList();
 void generationReports();
+void saveBedsToFile();
+void loadBedsFromFile();
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -59,6 +61,8 @@ int main() {
 
     initBeds();
 
+    loadBedsFromFile();
+
     do {
         printf("\n==== SMART HOSPITAL MENU ====\n");
         printf("1. Register Patient\n");
@@ -88,6 +92,7 @@ int main() {
                 generationReports();
                 break;
             case 5:
+                saveBedsToFile();
                 printf("Exiting... Goodbye!\n");
                 break;
         }
@@ -397,4 +402,42 @@ void generationReports() {
     }
 
     printf("\nHighest Paying Patient   : %s (LKR %.2f)\n", patientName[highestIdx], highestBill);
+}
+
+
+void saveBedsToFile() {
+    FILE *fp = fopen("beds_status.txt", "w");
+    int w, b;
+
+    if (fp == NULL) {
+        printf("Error: could not save bed status.\n");
+        return;
+    }
+
+    for (w = 0; w < 4; w++) {
+        for (b = 0; b < 20; b++) {
+            fprintf(fp, "%d ", bedOccupancy[w][b]);
+        }
+        fprintf(fp, "\n");
+    }
+
+    fclose(fp);
+}
+
+void loadBedsFromFile() {
+    FILE *fp = fopen("beds_status.txt", "r");
+    int w, b;
+
+    if (fp == NULL) {
+        initBeds();
+        return;
+    }
+
+    for (w = 0; w < 4; w++) {
+        for (b = 0; b < 20; b++) {
+            fscanf(fp, "%d", &bedOccupancy[w][b]);
+        }
+    }
+
+    fclose(fp);
 }
