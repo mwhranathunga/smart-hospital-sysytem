@@ -163,6 +163,11 @@ void registerPatient() {
     int i = patientCount;
     int specID;
 
+    if (patientCount >= MAX_PATIENTS) {
+        printf("Maximum patient limit reached. Cannot register more patients.\n");
+        return;
+    }
+
     printf("\n--- Register New Patient ---\n");
 
     printf("Patient Name: ");
