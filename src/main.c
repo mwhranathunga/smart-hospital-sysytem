@@ -13,6 +13,7 @@ float calcSurcharge(int triage, float fee);
 float calcWardCost(int days, int wIDX);
 float calcDiscount(int age, float gross);
 void printBill(int i);
+void printPriorityList();
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -306,4 +307,41 @@ void printBill(int i) {
         printf("Estimated Waiting Time  : %.2f mins\n", waitTime[i]);
     }
     printf("====================================================\n");
+}
+
+
+void printPriorityList() {
+    int order[MAX_PATIENTS];
+    int i, j, temp;
+
+    if (patientCount == 0) {
+        printf("\nNo patients registered yet.\n");
+        return;
+    }
+
+    for (i = 0; i < patientCount; i++) {
+        order[i] = i;
+    }
+
+    for (i = 0; i < patientCount - 1; i++) {
+        for (j = 0; j < patientCount - 1 - i; j++) {
+            if (triageLevel[order[j]] < triageLevel[order[j + 1]]) {
+                temp = order[j];
+                order[j] = order[j + 1];
+                order[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\n--- Patients by Priority ---\n");
+    for (i = 0; i < patientCount; i++) {
+        int p = order[i];
+        printf("PAT-%d | %-20s | ", 1000 + p + 1, patientName[p]);
+        switch (triageLevel[p]) {
+            case 1: printf("Level 1 (Normal)  "); break;
+            case 2: printf("Level 2 (Urgent)  "); break;
+            case 3: printf("Level 3 (Critical)"); break;
+        }
+        printf(" | %-20s | LKR %.2f\n", specialtyName[specialtyIdx[p]], finalAmount[p]);
+    }
 }
