@@ -17,6 +17,7 @@ void printPriorityList();
 void generationReports();
 void saveBedsToFile();
 void loadBedsFromFile();
+void appendPatientRecord(int i);
 
 //Doctor Specialties
 int specialityID[4] = {1, 2, 3, 4};
@@ -60,7 +61,6 @@ int main() {
     int choice;
 
     initBeds();
-
     loadBedsFromFile();
 
     do {
@@ -86,7 +86,7 @@ int main() {
                 displayBedStatus(3);
                 break;
             case 3:
-                printf("Coming soon: View Priority List\n");
+                printPriorityList();
                 break;
             case 4:
                 generationReports();
@@ -222,6 +222,7 @@ void registerPatient() {
     queueCount[specialtyIdx[i]]++;
 
     printBill(i);
+    appendPatientRecord(i);
 }
 
 float calcWaitTime(int specIdx) {
@@ -439,5 +440,20 @@ void loadBedsFromFile() {
         }
     }
 
+    fclose(fp);
+}
+
+void appendPatientRecord(int i) {
+    FILE *fp = fopen("patient_records.txt", "a");
+
+    if (fp == NULL) {
+        printf("Error: could not save patient record.\n");
+        return;
+    }
+
+    fprintf(fp, "PAT-%d | %s | Age: %d | Triage %d | %s | Final Amount: LKR %.2f\n",
+            1000 + i + 1,patientName[i],patientAge[i],triageLevel[i],specialtyName[specialtyIdx[i]],finalAmount[i]);
+    
+            
     fclose(fp);
 }
